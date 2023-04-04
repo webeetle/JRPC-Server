@@ -2,6 +2,7 @@
   "name": "jrpc-server",
   "version": "0.0.01",
   "description": "Json RPC Server",
+  "main": "build/server.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/webeetle/JRPC-Server.git"

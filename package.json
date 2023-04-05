@@ -1,6 +1,6 @@
 {
   "name": "@habeetat/jrpc-server",
-  "version": "0.0.01",
+  "version": "0.0.2",
   "description": "Json RPC Server",
   "main": "build/server.js",
   "private": false,

@@ -5,7 +5,7 @@ import { JRPC_METHOD, JRPC_REQUEST, JRPC_RESPONSE, JRPC_SCHEMA, JRPC_SCHEMA_INFO
 const ajv = new Ajv({
     strictTuples: false
 });
-const JRPC_SERVER_VERSION = '0.0.1';
+const JRPC_SERVER_VERSION = '0.0.2';
 const VERSION = '2.0';
 
 const ERRORS = {

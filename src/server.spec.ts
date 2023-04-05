@@ -911,7 +911,7 @@ describe("Server", () => {
         );
         const schema = server.getSchema();
         expect(schema).toEqual({
-            "version": "0.0.2",
+            "version": "0.0.3",
             "info": {
                 "name": "Test Server",
                 "description": "Test Server",
@@ -1098,6 +1098,67 @@ describe("Server", () => {
         };
         const result = await server.executeRequest(JSON.stringify(request));
         expect(result).toEqual(undefined);
+    });
+
+    it("json schema validation", async () => {
+        const server = new Server({
+            version: '1.0',
+            name: 'Test Server',
+            description: 'Test Server'
+        });
+        server.addMethod({
+            "name": "hi",
+            "description": "say hi",
+            "params": [
+                {
+                    "name": "person",
+                    "description": "The person to greet",
+                    "schema": {
+                        "$schema": "http://json-schema.org/draft-07/schema#",
+                        "type": "object",
+                        "properties": {
+                            "name": {
+                                "type": "string",
+                                "minLength": 1
+                            },
+                            "age": {
+                                "type": "integer",
+                                "minimum": 1
+                            }
+                        },
+                        "required": [
+                            "name"
+                        ],
+                        "additionalProperties": false
+                    }
+                }
+            ],
+            "result": {
+                "name": "greeting",
+                "description": "The greeting",
+                "schema": {
+                    "type": "string"
+                }
+            }
+        }, (person: unknown) => {
+            // @ts-ignore
+            return "hi " + person.name;
+        }
+        );
+        const request: JRPC_REQUEST = {
+            jsonrpc: "2.0",
+            method: "hi",
+            params: {
+                person: { name: "John" }
+            },
+            id: 1
+        };
+        const result = await server.executeRequest(JSON.stringify(request));
+        expect(result).toEqual({
+            jsonrpc: "2.0",
+            result: "hi John",
+            id: 1
+        });
     });
 
 });

@@ -1,11 +1,14 @@
 import Ajv from 'ajv';
+import addFormats from 'ajv-formats';
 import { ErrorResponse } from "./DTOs/errors";
 import { JRPC_METHOD, JRPC_REQUEST, JRPC_RESPONSE, JRPC_SCHEMA, JRPC_SCHEMA_INFO, JRPC_SCHEMA_METHOD } from "./types/types";
 
 const ajv = new Ajv({
     strictTuples: false
 });
-const JRPC_SERVER_VERSION = '0.0.2';
+addFormats(ajv);
+
+const JRPC_SERVER_VERSION = '0.0.3';
 const VERSION = '2.0';
 
 const ERRORS = {

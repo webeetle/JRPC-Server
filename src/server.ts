@@ -29,25 +29,57 @@ const ERROR_MESSAGES = {
     [ERRORS.SERVER_ERROR]: 'Server error',
 }
 
+/**
+ * JSON-RPC server implementation.
+ *
+ * @class Server
+ */
 export default class Server {
     private methods: JRPC_METHOD[] = [];
     private info: JRPC_SCHEMA_INFO;
 
+    /**
+     * Creates an instance of `Server`.
+     *
+     * @constructor
+     * @param {JRPC_SCHEMA_INFO} info - Information about the JSON-RPC server schema.
+     */
     constructor(info: JRPC_SCHEMA_INFO) {
         this.info = info;
     }
 
-    // check if method exists
+    /**
+     * Checks if a method with a given name exists.
+     *
+     * @private
+     * @param {string} name - The name of the method.
+     * @returns {boolean} `true` if a method with the given name exists, `false` otherwise.
+     */
     private methodExists(name: string): boolean {
         return !!this.methods.find((method) => method.schema.name === name);
     }
 
-    // find method by name
+    /**
+     * Finds a method with a given name.
+     *
+     * @private
+     * @param {string} name - The name of the method.
+     * @returns {JRPC_METHOD | null} The method with the given name or `null` if it doesn't exist.
+     */
     private findMethod(name: string): JRPC_METHOD | null {
         return this.methods.find((method) => method.schema.name === name) || null;
     }
 
-    // add method to container
+    /**
+     * Adds a method to the server.
+     *
+     * @public
+     * @param {JRPC_SCHEMA_METHOD} schema - The schema of the method.
+     * @param {Function} handler - The handler function for the method.
+     * @throws {Error} If the `handler` parameter is not a function.
+     * @throws {Error} If a method with the same name already exists.
+     * @throws {Error} If the method name starts with "rpc.", which is reserved.
+     */
     public addMethod(schema: JRPC_SCHEMA_METHOD, handler: Function) {
         if (typeof handler !== 'function') {
             throw new Error('Handler must be a function');
@@ -55,7 +87,7 @@ export default class Server {
         if (this.methodExists(schema.name)) {
             throw new Error(`Method ${schema.name} already exists`);
         }
-        if(schema.name.startsWith('rpc.')) {
+        if (schema.name.startsWith('rpc.')) {
             throw new Error(`Method ${schema.name} is reserved`);
         }
         this.methods.push({
@@ -64,7 +96,14 @@ export default class Server {
         });
     }
 
-    // create response
+    /**
+     * Creates a JSON-RPC response object.
+     *
+     * @private
+     * @param {JRPC_REQUEST} request - The JSON-RPC request object.
+     * @param {object | Array<unknown>} result - The result of the request.
+     * @returns {JRPC_RESPONSE} A JSON-RPC response object.
+     */
     private createResponse(request: JRPC_REQUEST, result: object | Array<unknown>): JRPC_RESPONSE {
         return {
             jsonrpc: VERSION,
@@ -73,7 +112,16 @@ export default class Server {
         }
     }
 
-    // create error response
+    /**
+    * Creates a JSON-RPC error response object.
+    *
+    * @private
+    * @param {JRPC_REQUEST | null} request - The JSON-RPC request object (optional).
+    * * @param {string} code - The error code.
+    * @param {string} message - The error message.
+    * @param {object} [data] - Additional error data (optional).
+    * @returns {JRPC_RESPONSE} A JSON-RPC error response object.
+    */
     private createErrorResponse(request: JRPC_REQUEST | null, code: string, message: string, data?: object): JRPC_RESPONSE {
         return {
             jsonrpc: VERSION,
@@ -86,7 +134,14 @@ export default class Server {
         }
     }
 
-    // parse request
+    /**
+    * Parses a JSON-RPC request string and returns the corresponding request object(s).
+    *
+    * @private
+    * @param {string} request - The JSON-RPC request string.
+    * @returns {JRPC_REQUEST | JRPC_REQUEST[]} The corresponding JSON-RPC request object(s).
+    * @throws {ErrorResponse} If the request string cannot be parsed.
+    */
     private parseRequest(request: string): JRPC_REQUEST | JRPC_REQUEST[] {
         try {
             return JSON.parse(request);
@@ -95,7 +150,15 @@ export default class Server {
         }
     }
 
-    // validate request
+    
+    /**
+     * Validates a JSON-RPC request object against its corresponding method schema.
+     *
+     * @private
+     * @param {JRPC_REQUEST} request - The JSON-RPC request object to validate.
+     * @returns {boolean} `true` if the request is valid, `false` otherwise.
+     * @throws {ErrorResponse} If the request is invalid.
+     */
     private validateRequest(request: JRPC_REQUEST): boolean {
         const method = this.findMethod(request.method);
         if (method?.schema.notification) {
@@ -157,7 +220,16 @@ export default class Server {
         return true;
     }
 
-    // handle request
+    /**
+    * Handles a single JSON-RPC request object
+    * 
+    * @private
+    * @param {JRPC_REQUEST} request - The JSON-RPC request object to handle.
+    * @returns {Promise<JRPC_RESPONSE | void>} A promise that resolves to the corresponding JSON-RPC response object,
+    * or `void` if the request is a notification.
+    * @throws {CustomErrorResponse} If the handler function throws a custom error.
+    * @throws {ErrorResponse} If the request is invalid or there's an error while processing the request.
+    */
     private async handleRequest(request: JRPC_REQUEST): Promise<JRPC_RESPONSE | void> {
         try {
             this.validateRequest(request);
@@ -177,7 +249,7 @@ export default class Server {
                 return this.createResponse(request, result);
             }
         } catch (e) {
-            if(e instanceof CustomErrorResponse) {
+            if (e instanceof CustomErrorResponse) {
                 return this.createErrorResponse(request, ERRORS.SERVER_ERROR, ERROR_MESSAGES[ERRORS.SERVER_ERROR], {
                     ...e
                 });
@@ -192,7 +264,14 @@ export default class Server {
         }
     }
 
-    // execute request
+    /**
+     * Executes a JSON-RPC request string and returns the corresponding response object(s).
+     *
+     * @public
+     * @param {string} request - The JSON-RPC request string.
+     * @returns {Promise<JRPC_RESPONSE | JRPC_RESPONSE[] | void>} A promise that resolves with the corresponding JSON-RPC response object(s) (if any).
+     * @throws {ErrorResponse | Error} If an error occurs while executing the request.
+     */
     public async executeRequest(request: string): Promise<JRPC_RESPONSE | JRPC_RESPONSE[] | void> {
         try {
             const parsedRequest: JRPC_REQUEST | JRPC_REQUEST[] = this.parseRequest(request);
@@ -224,7 +303,12 @@ export default class Server {
         }
     }
 
-    // return the server schema
+    /**
+     * Returns the server schema.
+     *
+     * @public
+     * @returns {JRPC_SCHEMA} The server schema.
+     */
     public getSchema(): JRPC_SCHEMA {
         return {
             version: JRPC_SERVER_VERSION,

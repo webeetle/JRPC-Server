@@ -1,0 +1,8 @@
+{
+    "$schema": "https://typedoc.org/schema.json",
+    "name": "JRPC Server",
+    "entryPoints": ["src/"],
+    "entryPointStrategy": "expand",
+    "exclude": ["**/*+(index|.spec|.e2e).ts"],
+    "out": "docs"
+}

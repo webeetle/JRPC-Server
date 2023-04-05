@@ -1,6 +1,6 @@
 {
   "name": "@habeetat/jrpc-server",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Json RPC Server",
   "main": "build/server.js",
   "private": false,
@@ -17,7 +17,8 @@
     "test": "jest --coverage",
     "build": "tsc",
     "lint": "eslint --ext .ts src/",
-    "lint:fix": "eslint --ext .ts src/ --fix"
+    "lint:fix": "eslint --ext .ts src/ --fix",
+    "docs": "typedoc --options typedoc.json"
   },
   "author": "ParanoiaSystem",
   "license": "MIT",

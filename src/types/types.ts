@@ -47,18 +47,6 @@ export type JRPC_RESPONSE = {
 }
 
 /**
- * Represents a parameter for a JSON-RPC method schema.
- *
- * @typedef {Object} PARAM
- * @property {string} name - The name of the parameter.
- * @property {number | string | boolean | object | Array<unknown>} type - The type of the parameter.
- */
-export type PARAM = {
-    name: string;
-    type: number | string | boolean | object | Array<unknown>;
-}
-
-/**
  * Represents a JSON-RPC method.
  *
  * @typedef {Object} JRPC_METHOD
@@ -69,7 +57,6 @@ export type JRPC_METHOD = {
     schema: JRPC_SCHEMA_METHOD,
     handler: Function;
 }
-
 
 /**
  * Represents a JSON-RPC schema.

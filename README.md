@@ -7,6 +7,9 @@
     <a href="https://app.codacy.com/gh/webeetle/JRPC-Server/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade" alt="Codacy Badge">
         <img src="https://img.shields.io/codacy/grade/9769707d98ea442683e4bf1f70fbcf46" alt="Codacy Badge">
     </a>
+    <a href="https://app.codecov.io/gh/webeetle/JRPC-Server" alt="Codecov">
+        <img src="https://img.shields.io/codecov/c/gh/webeetle/JRPC-Server" alt="Codecov">
+    </a>
     <img src="https://img.shields.io/github/languages/top/webeetle/JRPC-Server" alt="Language">
     <a href="https://github.com/webeetle/JRPC-Server/commits" alt="Last Commit">
         <img src="https://img.shields.io/github/last-commit/webeetle/JRPC-Server" alt="Last Commit">

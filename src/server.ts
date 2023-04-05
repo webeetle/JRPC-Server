@@ -8,7 +8,7 @@ const ajv = new Ajv({
 });
 addFormats(ajv);
 
-const JRPC_SERVER_VERSION = '0.0.6';
+const JRPC_SERVER_VERSION = '0.0.7';
 const VERSION = '2.0';
 
 const ERRORS = {

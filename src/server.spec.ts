@@ -912,7 +912,7 @@ describe("Server", () => {
         );
         const schema = server.getSchema();
         expect(schema).toEqual({
-            "version": "0.0.6",
+            "version": "0.0.7",
             "info": {
                 "name": "Test Server",
                 "description": "Test Server",
@@ -1214,7 +1214,6 @@ describe("Server", () => {
             id: 1
         };
         const result = await server.executeRequest(JSON.stringify(request));
-        console.log(result);
         expect(result).toEqual({
             jsonrpc: "2.0",
             error: {

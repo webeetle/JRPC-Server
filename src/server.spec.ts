@@ -911,7 +911,7 @@ describe("Server", () => {
         );
         const schema = server.getSchema();
         expect(schema).toEqual({
-            "version": "0.0.3",
+            "version": "0.0.4",
             "info": {
                 "name": "Test Server",
                 "description": "Test Server",

@@ -175,7 +175,11 @@ export default class Server {
             }
         } catch (e) {
             if (e instanceof ErrorResponse) {
-                return this.createErrorResponse(request, e.code.toString(), e.message);
+                // @ts-ignore
+                return this.createErrorResponse(request, ERRORS.SERVER_ERROR, ERROR_MESSAGES[ERRORS.SERVER_ERROR], {
+                    // @ts-ignore
+                    ...e
+                });
             } else {
                 // @ts-ignore
                 return this.createErrorResponse(request, ERRORS.SERVER_ERROR, ERROR_MESSAGES[ERRORS.SERVER_ERROR], {

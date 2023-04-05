@@ -1,6 +1,6 @@
 import Ajv from 'ajv';
 import addFormats from 'ajv-formats';
-import { ErrorResponse } from "./DTOs/errors";
+import { CustomErrorResponse, ErrorResponse } from "./DTOs/errors";
 import { JRPC_METHOD, JRPC_REQUEST, JRPC_RESPONSE, JRPC_SCHEMA, JRPC_SCHEMA_INFO, JRPC_SCHEMA_METHOD } from "./types/types";
 
 const ajv = new Ajv({
@@ -54,6 +54,9 @@ export default class Server {
         }
         if (this.methodExists(schema.name)) {
             throw new Error(`Method ${schema.name} already exists`);
+        }
+        if(schema.name.startsWith('rpc.')) {
+            throw new Error(`Method ${schema.name} is reserved`);
         }
         this.methods.push({
             schema,
@@ -174,14 +177,13 @@ export default class Server {
                 return this.createResponse(request, result);
             }
         } catch (e) {
-            if (e instanceof ErrorResponse) {
-                // @ts-ignore
+            if(e instanceof CustomErrorResponse) {
                 return this.createErrorResponse(request, ERRORS.SERVER_ERROR, ERROR_MESSAGES[ERRORS.SERVER_ERROR], {
-                    // @ts-ignore
                     ...e
                 });
+            } else if (e instanceof ErrorResponse) {
+                return this.createErrorResponse(request, e.code.toString(), e.message);
             } else {
-                // @ts-ignore
                 return this.createErrorResponse(request, ERRORS.SERVER_ERROR, ERROR_MESSAGES[ERRORS.SERVER_ERROR], {
                     // @ts-ignore
                     message: e.message,

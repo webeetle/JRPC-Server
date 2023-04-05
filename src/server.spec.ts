@@ -1,3 +1,4 @@
+import { CustomErrorResponse, ErrorResponse } from "./DTOs/errors";
 import Server from "./server";
 import { JRPC_REQUEST } from "./types/types";
 
@@ -1159,6 +1160,120 @@ describe("Server", () => {
             result: "hi John",
             id: 1
         });
+    });
+
+    it("custom error", async () => {
+        const server = new Server({
+            version: '1.0',
+            name: 'Test Server',
+            description: 'Test Server'
+        });
+        server.addMethod({
+            "name": "hi",
+            "description": "say hi",
+            "params": [
+                {
+                    "name": "person",
+                    "description": "The person to greet",
+                    "schema": {
+                        "$schema": "http://json-schema.org/draft-07/schema#",
+                        "type": "object",
+                        "properties": {
+                            "name": {
+                                "type": "string",
+                                "minLength": 1
+                            },
+                            "age": {
+                                "type": "integer",
+                                "minimum": 1
+                            }
+                        },
+                        "required": [
+                            "name"
+                        ],
+                        "additionalProperties": false
+                    }
+                }
+            ],
+            "result": {
+                "name": "greeting",
+                "description": "The greeting",
+                "schema": {
+                    "type": "string"
+                }
+            }
+        }, (person: unknown) => {
+            throw new CustomErrorResponse("Custom error", -1);
+        });
+        const request: JRPC_REQUEST = {
+            jsonrpc: "2.0",
+            method: "hi",
+            params: {
+                person: { name: "John" }
+            },
+            id: 1
+        };
+        const result = await server.executeRequest(JSON.stringify(request));
+        console.log(result);
+        expect(result).toEqual({
+            jsonrpc: "2.0",
+            error: {
+                code: "-32000",
+                message: "Server error",
+                data: {
+                    code: -1,
+                    message: "Custom error"
+                }
+            },
+            id: 1
+        });
+    });
+
+    it('method start with rpc. is not allowed', async () => {
+        const server = new Server({
+            version: '1.0',
+            name: 'Test Server',
+            description: 'Test Server'
+        });
+        expect(() => {
+            server.addMethod({
+                "name": "rpc.hi",
+                "description": "say hi",
+                "params": [
+                    {
+                        "name": "person",
+                        "description": "The person to greet",
+                        "schema": {
+                            "$schema": "http://json-schema.org/draft-07/schema#",
+                            "type": "object",
+                            "properties": {
+                                "name": {
+                                    "type": "string",
+                                    "minLength": 1
+                                },
+                                "age": {
+                                    "type": "integer",
+                                    "minimum": 1
+                                }
+                            },
+                            "required": [
+                                "name"
+                            ],
+                            "additionalProperties": false
+                        }
+                    }
+                ],
+                "result": {
+                    "name": "greeting",
+                    "description": "The greeting",
+                    "schema": {
+                        "type": "string"
+                    }
+                }
+            }, (person: unknown) => {
+                throw new CustomErrorResponse("Custom error", -1);
+            });
+        }).toThrowError("Method rpc.hi is reserved");
     });
 
 });

@@ -1,0 +1,11 @@
+logs/
+node_modules/
+coverage/
+docs/
+.github/
+src/
+.idea/
+.DS_Store
+jest.config.js
+typedoc.json
+tsconfig.json

@@ -1,8 +1,8 @@
 {
   "name": "@habeetat/jrpc-server",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Json RPC Server",
-  "main": "build/server.js",
+  "main": "build/index.js",
   "private": false,
   "repository": {
     "type": "git",

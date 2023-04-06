@@ -8,8 +8,8 @@ const ajv = new Ajv({
 });
 addFormats(ajv);
 
-const JRPC_SERVER_VERSION = '0.0.7';
-const VERSION = '2.0';
+const JRPC_SERVER_VERSION = '0.0.8';
+const JSON_RPC_VERSION = '2.0';
 
 const ERRORS = {
     PARSE_ERROR: '-32700',
@@ -106,7 +106,7 @@ export default class Server {
      */
     private createResponse(request: JRPC_REQUEST, result: object | Array<unknown>): JRPC_RESPONSE {
         return {
-            jsonrpc: VERSION,
+            jsonrpc: JSON_RPC_VERSION,
             result,
             id: request.id,
         }
@@ -117,14 +117,14 @@ export default class Server {
     *
     * @private
     * @param {JRPC_REQUEST | null} request - The JSON-RPC request object (optional).
-    * * @param {string} code - The error code.
+    * @param {string} code - The error code.
     * @param {string} message - The error message.
     * @param {object} [data] - Additional error data (optional).
     * @returns {JRPC_RESPONSE} A JSON-RPC error response object.
     */
     private createErrorResponse(request: JRPC_REQUEST | null, code: string, message: string, data?: object): JRPC_RESPONSE {
         return {
-            jsonrpc: VERSION,
+            jsonrpc: JSON_RPC_VERSION,
             error: {
                 code,
                 message,
@@ -160,22 +160,23 @@ export default class Server {
      * @throws {ErrorResponse} If the request is invalid.
      */
     private validateRequest(request: JRPC_REQUEST): boolean {
+        if(!request.method || typeof request.method !== 'string') {
+            throw new ErrorResponse(ERROR_MESSAGES[ERRORS.INVALID_REQUEST], parseInt(ERRORS.INVALID_REQUEST));
+        }
         const method = this.findMethod(request.method);
         if (method?.schema.notification) {
             return true;
         }
-        if (!request.jsonrpc || request.jsonrpc !== VERSION) {
+        if (!request.jsonrpc || request.jsonrpc !== JSON_RPC_VERSION) {
             throw new ErrorResponse(ERROR_MESSAGES[ERRORS.INVALID_REQUEST], parseInt(ERRORS.INVALID_REQUEST));
         }
-        if (!request.id) {
-            throw new ErrorResponse(ERROR_MESSAGES[ERRORS.INVALID_REQUEST], parseInt(ERRORS.INVALID_REQUEST));
-        }
-        if (!request.method) {
+        if (!request.id || typeof request.id !== 'string' && typeof request.id !== 'number') {
             throw new ErrorResponse(ERROR_MESSAGES[ERRORS.INVALID_REQUEST], parseInt(ERRORS.INVALID_REQUEST));
         }
         if (!method) {
             throw new ErrorResponse(ERROR_MESSAGES[ERRORS.METHOD_NOT_FOUND], parseInt(ERRORS.METHOD_NOT_FOUND));
         }
+        
         // validate params
         let schema = {};
 
@@ -225,8 +226,7 @@ export default class Server {
     * 
     * @private
     * @param {JRPC_REQUEST} request - The JSON-RPC request object to handle.
-    * @returns {Promise<JRPC_RESPONSE | void>} A promise that resolves to the corresponding JSON-RPC response object,
-    * or `void` if the request is a notification.
+    * @returns {Promise<JRPC_RESPONSE | void>} A promise that resolves to the corresponding JSON-RPC response object, or `void` if the request is a notification.
     * @throws {CustomErrorResponse} If the handler function throws a custom error.
     * @throws {ErrorResponse} If the request is invalid or there's an error while processing the request.
     */
@@ -239,14 +239,16 @@ export default class Server {
             if (Array.isArray(request.params)) {
                 params.push(...request.params);
             } else {
-                method!.schema.params.forEach((param) => {
+                method?.schema.params.forEach((param) => {
                     // @ts-ignore
                     params.push(request.params[param.name]);
                 });
             }
-            if (!(method!.schema.notification)) {
-                const result = await method!.handler(...params);
+            if (!(method?.schema.notification)) {
+                const result = await method?.handler(...params);
                 return this.createResponse(request, result);
+            } else {
+                await method?.handler(...params);
             }
         } catch (e) {
             if (e instanceof CustomErrorResponse) {

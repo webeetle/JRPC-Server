@@ -109,6 +109,6 @@
   "exclude": [
     "node_modules",
     "build",
-    "src/**/*.spec.ts",
+    "src/**/*.spec.ts"
   ]
 }

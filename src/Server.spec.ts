@@ -1,6 +1,6 @@
 import Server from './Server';
 import { JRPC_RESPONSE, JRPC_SCHEMA_INFO, JRPC_SCHEMA_METHOD } from './types/types';
-import { CustomErrorResponse, ErrorResponse } from './DTOs/errors';
+import { CustomErrorResponse } from './DTOs/errors';
 
 describe('Server', () => {
     function isJRPCResponse(response: JRPC_RESPONSE | JRPC_RESPONSE[] | void): response is JRPC_RESPONSE {

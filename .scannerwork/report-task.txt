@@ -2,5 +2,5 @@ projectKey=webeetle_JRPC-Server_AYkmSdmlLrlLIvKVcSb1
 serverUrl=https://sonarq.hb.webeetlelabs.com
 serverVersion=10.1.0.73491
 dashboardUrl=https://sonarq.hb.webeetlelabs.com/dashboard?id=webeetle_JRPC-Server_AYkmSdmlLrlLIvKVcSb1
-ceTaskId=AYkmTNTrLrlLIvKVcScC
-ceTaskUrl=https://sonarq.hb.webeetlelabs.com/api/ce/task?id=AYkmTNTrLrlLIvKVcScC
+ceTaskId=AYkmTrbJLrlLIvKVcScD
+ceTaskUrl=https://sonarq.hb.webeetlelabs.com/api/ce/task?id=AYkmTrbJLrlLIvKVcScD

@@ -1,0 +1,6 @@
+projectKey=webeetle_JRPC-Server_AYkk79oiLrlLIvKVcSZk
+serverUrl=https://sonarq.hb.webeetlelabs.com
+serverVersion=10.1.0.73491
+dashboardUrl=https://sonarq.hb.webeetlelabs.com/dashboard?id=webeetle_JRPC-Server_AYkk79oiLrlLIvKVcSZk
+ceTaskId=AYkmCFpdLrlLIvKVcSba
+ceTaskUrl=https://sonarq.hb.webeetlelabs.com/api/ce/task?id=AYkmCFpdLrlLIvKVcSba

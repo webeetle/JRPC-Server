@@ -8,7 +8,7 @@ const ajv = new Ajv({
 });
 addFormats(ajv);
 
-const JRPC_SERVER_VERSION = '0.0.8';
+const JRPC_SERVER_VERSION = '0.0.9';
 const JSON_RPC_VERSION = '2.0';
 
 const ERRORS = {
@@ -67,7 +67,7 @@ export default class Server {
      * @returns {JRPC_METHOD | null} The method with the given name or `null` if it doesn't exist.
      */
     private findMethod(name: string): JRPC_METHOD | null {
-        return this.methods.find((method) => method.schema.name === name) || null;
+        return this.methods.find((method) => method.schema.name === name) ?? null;
     }
 
     /**
